@@ -1,0 +1,27 @@
+{
+  "name": "mcp-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@huggingface/inference": "^4.5.1",
+    "@huggingface/mcp-client": "^0.2.0",
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "googleapis": "^150.0.1",
+    "node-fetch": "^3.3.2",
+    "pdf-parse": "^1.1.1",
+    "zod": "^3.25.76"
+  }
+}
