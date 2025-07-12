@@ -25,7 +25,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204,
 }));
-app.options('/*', cors()); // ✅ Handles iOS preflight
 
 app.use(express.json());
 
