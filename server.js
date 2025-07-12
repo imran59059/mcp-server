@@ -31,7 +31,11 @@ const hfClient = new InferenceClient(process.env.HF_TOKEN);
 
 // Create Express app
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
 app.use(express.json());
 
 // Create the MCP server
