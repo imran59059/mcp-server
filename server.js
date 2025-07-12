@@ -1,18 +1,4 @@
 // 📝Note: Express JS || LLM Model -> llama3 || Database || Prompt: REACT APP or POSTMAN
-// Run Process: 
-//       1 - need to run this file using node 
-//       2 - need to run ollama (Command is: ollama run llama3 )
-//       3 - Prompt: 
-//            a. React App
-//            b. Postman
-//            - URL: http://localhost:8081/query
-//            - Headers: Content-Type: application/json
-//            - Method: POST
-//            - Body (raw, JSON format): {
-//                "prompt": "hey"
-//              }
-//       4 - output 
-// -------------------------------------------------------------------------------
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -21,45 +7,35 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { z } from "zod";
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 
 dotenv.config();
 console.log("🟢 Server is starting...");
 
-// Initialize Hugging Face Inference Client
+// ✅ Hugging Face Inference Client
 const hfClient = new InferenceClient(process.env.HF_TOKEN);
 
-// Create Express app
+// ✅ Initialize Express
 const app = express();
+
+// ✅ CORS for mobile browser compatibility
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 }));
+app.options('/*', cors()); // ✅ Handles iOS preflight
 
 app.use(express.json());
 
-// Create the MCP server
+// ✅ MCP Server
 const server = new McpServer({
   name: "imran-data",
   version: "1.0.0",
 });
 
-// // 🟡 Step 1: Fetch your API data
-// let userData = "";
-// try {
-//   const dataRes = await fetch("https://686a36172af1d945cea37af0.mockapi.io/api/imr/about");
-//   const dataJson = await dataRes.json();
-//   userData = JSON.stringify(dataJson, null, 2); // pretty print
-// } catch (err) {
-//   console.error("Failed to fetch API data:", err.message);
-//   userData = "Error fetching user data.";
-// }
-
-
-// 🟢 Step 2: Query Qwen3 model via Hugging Face
+// ✅ HuggingFace Model Query
 async function queryQwen(prompt = "Hello, who are you Gregorio?") {
   try {
     const chatCompletion = await hfClient.chatCompletion({
@@ -77,14 +53,14 @@ async function queryQwen(prompt = "Hello, who are you Gregorio?") {
       result: chatCompletion.choices[0].message.content,
     };
   } catch (err) {
-    console.log("Error in queryQwen:", err);
+    console.error("❌ Error in queryQwen:", err);
     return { error: err.message };
   }
 }
 
-// 🧠 Tool handler using Qwen3
+// ✅ Tool handler for MCP
 const runQueryQwenModel = async ({ prompt }) => {
-  const response = await queryQwen(prompt); // you can use prompt instead if needed
+  const response = await queryQwen(prompt);
   console.log("response:", response);
 
   return {
@@ -97,6 +73,7 @@ const runQueryQwenModel = async ({ prompt }) => {
   };
 };
 
+// ✅ Register Tool
 server.tool(
   "queryQwenModel",
   {
@@ -105,12 +82,12 @@ server.tool(
   runQueryQwenModel
 );
 
-// ✅ Simple test route to confirm server is alive
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("✅ MCP Backend is LIVE");
 });
 
-// Express route for Postman
+// ✅ Query route
 app.post("/query", async (req, res) => {
   const { prompt } = req.body;
   try {
@@ -121,10 +98,10 @@ app.post("/query", async (req, res) => {
   }
 });
 
-// Set transport
+// ✅ Bootstrap server
 async function init() {
-  const PORT = process.env.PORT || 8080; // ✅ Railway provides PORT
-  const HOST = '0.0.0.0'; // ✅ Required for Railway
+  const PORT = process.env.PORT || 8080;
+  const HOST = "0.0.0.0";
 
   const transport = new StreamableHTTPServerTransport({
     port: PORT,
@@ -134,10 +111,8 @@ async function init() {
   await server.connect(transport);
 
   app.listen(PORT, HOST, () => {
-    console.log(`🟢 Server running on http://${HOST}:${PORT}/query`);
+    console.log(`🟢 Server running at http://${HOST}:${PORT}/query`);
   });
 }
-
-
 
 init().catch(console.error);
