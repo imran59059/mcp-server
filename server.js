@@ -102,6 +102,11 @@ server.tool(
   runQueryQwenModel
 );
 
+// ✅ Simple test route to confirm server is alive
+app.get("/", (req, res) => {
+  res.send("✅ MCP Backend is LIVE");
+});
+
 // Express route for Postman
 app.post("/query", async (req, res) => {
   const { prompt } = req.body;
@@ -129,6 +134,7 @@ async function init() {
     console.log(`🟢 Server running on http://${HOST}:${PORT}/query`);
   });
 }
+
 
 
 init().catch(console.error);
