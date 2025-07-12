@@ -111,17 +111,18 @@ app.post("/query", async (req, res) => {
 
 // Set transport
 async function init() {
-  const PORT = process.env.PORT || 8081;
+  const PORT = process.env.PORT || 8080; // ✅ Railway provides PORT
+  const HOST = '0.0.0.0'; // ✅ Required for Railway
 
   const transport = new StreamableHTTPServerTransport({
     port: PORT,
-    host: "0.0.0.0", // required for Railway to work
+    host: HOST,
   });
 
   await server.connect(transport);
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🟢 Server running on http://localhost:${PORT}/query`);
+  app.listen(PORT, HOST, () => {
+    console.log(`🟢 Server running on http://${HOST}:${PORT}/query`);
   });
 }
 
