@@ -39,6 +39,8 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
+app.options('*', cors());
+
 app.use(express.json());
 
 // Create the MCP server
@@ -47,16 +49,17 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// 🟡 Step 1: Fetch your API data
-let userData = "";
-try {
-  const dataRes = await fetch("https://686a36172af1d945cea37af0.mockapi.io/api/imr/about");
-  const dataJson = await dataRes.json();
-  userData = JSON.stringify(dataJson, null, 2); // pretty print
-} catch (err) {
-  console.error("Failed to fetch API data:", err.message);
-  userData = "Error fetching user data.";
-}
+// // 🟡 Step 1: Fetch your API data
+// let userData = "";
+// try {
+//   const dataRes = await fetch("https://686a36172af1d945cea37af0.mockapi.io/api/imr/about");
+//   const dataJson = await dataRes.json();
+//   userData = JSON.stringify(dataJson, null, 2); // pretty print
+// } catch (err) {
+//   console.error("Failed to fetch API data:", err.message);
+//   userData = "Error fetching user data.";
+// }
+
 
 // 🟢 Step 2: Query Qwen3 model via Hugging Face
 async function queryQwen(prompt = "Hello, who are you Gregorio?") {
@@ -111,9 +114,9 @@ app.get("/", (req, res) => {
 
 // Express route for Postman
 app.post("/query", async (req, res) => {
-  const { userData } = req.body;
+  const { prompt } = req.body;
   try {
-    const result = await runQueryQwenModel({ userData });
+    const result = await runQueryQwenModel({ prompt });
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
