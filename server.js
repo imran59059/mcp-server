@@ -111,14 +111,19 @@ app.post("/query", async (req, res) => {
 
 // Set transport
 async function init() {
+  const PORT = process.env.PORT || 8081;
+
   const transport = new StreamableHTTPServerTransport({
-    port: 8081,
-    host: "localhost",
+    port: PORT,
+    host: "0.0.0.0", // required for Railway to work
   });
+
   await server.connect(transport);
-  app.listen(8081, () => {
-    console.log("🟢 HTTP Server running on http://localhost:8081/query");
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🟢 Server running on http://localhost:${PORT}/query`);
   });
 }
+
 
 init().catch(console.error);
